@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
   container: {},
   input: {
     width: "100%",
-    padding: 8,
-    borderRadius: 15,
+    padding: 12,
+    borderRadius: 20,
     marginBottom: 15,
   },
   borderDeActive: {

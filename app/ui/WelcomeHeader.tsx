@@ -1,18 +1,32 @@
 import colors from "@utils/colors";
 import { FC } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ImageSourcePropType,
+} from "react-native";
 
-interface Props {}
+interface Props {
+  imageUrl: ImageSourcePropType;
+  heading: string;
+  subHeading: string;
+}
 
-const heading = "Online Marketplace for Used Goods";
-const subHeading =
-  "Buy or sell used goods with trust. Chat derectly with sellers, ensuring a seamless, authentic experience";
+// const heading = "Online Marketplace for Used Goods";
+// const subHeading =
+//   "Buy or sell used goods with trust. Chat derectly with sellers, ensuring a seamless, authentic experience";
 
-const WelcomeHeader: FC<Props> = (props) => {
+// const heading = "Your Online Spot to Buy & Sell.";
+// const subHeading =
+//   "Instantly connect with real people to trade secondhand goods safely and easily.";
+
+const WelcomeHeader: FC<Props> = ({ imageUrl, heading, subHeading }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/hero.png")}
+        source={imageUrl}
         style={styles.image}
         resizeMode="contain"
         resizeMethod="resize"
@@ -33,18 +47,18 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontWeight: 600,
-    fontSize: 20,
+    fontSize: 25,
     textAlign: "center",
     letterSpacing: 1,
     marginBottom: 5,
-    color: colors.primary,
+    color: colors.textPrimary,
   },
   subHeading: {
     fontSize: 12,
     textAlign: "center",
     marginHorizontal: 20,
     lineHeight: 14,
-    color: colors.primary,
+    color: colors.textSecondary,
   },
 });
 
