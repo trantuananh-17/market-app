@@ -8,36 +8,12 @@ import FormNavigator from "@ui/FormNavigator";
 import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/Auth";
-import * as yup from "yup";
 import axios from "axios";
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex =
-  /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]+$/;
-
-yup.addMethod(yup.string, "email", function validateEmail(message) {
-  return this.matches(emailRegex, {
-    message,
-    name: "email",
-    excludeEmptyString: true,
-  });
-});
-
-export const newUserSchema = yup.object({
-  name: yup.string().required("Name is required"),
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .required("password is required")
-    .min(6, "Password must be at least 6 characters long.")
-    .matches(
-      passwordRegex,
-      "Password must include: A-Z, a-z, 0-9, and special character (!@#$%^&*)."
-    ),
-});
+import { newUserSchema, yupValidate } from "@utils/validator";
+import { apiRequest } from "app/api/apiRequest";
+import { showMessage } from "react-native-flash-message";
+import Toast from "react-native-toast-message";
+import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
 
 interface Props {}
 
@@ -48,6 +24,8 @@ const SignUp: FC<Props> = (props) => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (name: string) => {
     return (text: string) => {
       setUserInfo({ ...userInfo, [name]: text });
@@ -55,12 +33,25 @@ const SignUp: FC<Props> = (props) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      const info = await newUserSchema.validate(userInfo);
-      axios.post("");
-    } catch (error) {
-      console.log(error);
+    setLoading(true);
+    const { values, error } = await yupValidate(newUserSchema, userInfo);
+
+    if (error) {
+      setLoading(false);
+      return showErrorToast({ title: "Lỗi", message: error });
     }
+
+    const res = await apiRequest<{ message: string }>(
+      axios.post(
+        "https://market-server-n0st.onrender.com/api/auth/sign-up",
+        values
+      )
+    );
+
+    if (res?.message)
+      showSuccessToast({ title: "Thành công", message: res.message });
+
+    setLoading(false);
   };
 
   const { email, name, password } = userInfo;
@@ -78,6 +69,7 @@ const SignUp: FC<Props> = (props) => {
         <View style={styles.formContainer}>
           <FormInput
             placeholder="Name..."
+            autoCapitalize="none"
             value={name}
             onChangeText={handleChange("name")}
           />
@@ -91,11 +83,12 @@ const SignUp: FC<Props> = (props) => {
           <FormInput
             placeholder="Password..."
             secureTextEntry
+            autoCapitalize="none"
             value={password}
             onChangeText={handleChange("password")}
           />
 
-          <AppButton title="Sign Up" onPress={handleSubmit} />
+          <AppButton active={!loading} title="Sign Up" onPress={handleSubmit} />
 
           <FormDivider />
 

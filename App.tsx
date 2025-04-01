@@ -1,10 +1,12 @@
 import { SafeAreaView, StyleSheet, StatusBar, Platform } from "react-native";
 import Navigator from "app/navigator";
+import Toast from "react-native-toast-message";
 
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <Navigator />
+      <Toast />
     </SafeAreaView>
   );
 }

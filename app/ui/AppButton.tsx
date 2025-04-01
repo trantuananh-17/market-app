@@ -1,6 +1,12 @@
 import colors from "@utils/colors";
 import { FC } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 
 interface Props {
   title: string;
@@ -14,7 +20,11 @@ const AppButton: FC<Props> = ({ title, active = true, onPress }) => {
       onPress={onPress}
       style={[styles.button, active ? styles.btnActive : styles.btnDeActive]}
     >
-      <Text style={styles.title}>{title}</Text>
+      {active ? (
+        <Text style={styles.title}>{title}</Text>
+      ) : (
+        <ActivityIndicator color="#fff" />
+      )}
     </Pressable>
   );
 };
