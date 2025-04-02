@@ -1,6 +1,6 @@
 import FormInput from "@ui/FormInput";
 import WelcomeHeader from "@ui/WelcomeHeader";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import AppButton from "@ui/AppButton";
 import FormDivider from "@ui/FormDivider";
@@ -8,11 +8,42 @@ import FormNavigator from "@ui/FormNavigator";
 import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/Auth";
+import { emailRegex } from "@utils/validator";
+import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
+import client from "app/api/client";
+import { apiRequest } from "app/api/apiRequest";
 
 interface Props {}
 
 const ForgetPassword: FC<Props> = (props) => {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
+
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    if (!emailRegex.test(email)) {
+      setLoading(false);
+      return showErrorToast({
+        title: "Lỗi",
+        message: "Email không hợp lệ!",
+      });
+    }
+
+    const res = await apiRequest<{ message: string }>(
+      client.post("/api/auth/forget-pass", { email })
+    );
+
+    setLoading(false);
+
+    if (res) {
+      showSuccessToast({
+        title: "Thành công",
+        message: res.message,
+      });
+    }
+  };
 
   return (
     <CustomKeyboardAvoidingView>
@@ -27,9 +58,11 @@ const ForgetPassword: FC<Props> = (props) => {
             placeholder="Email..."
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
 
-          <AppButton title="Send" />
+          <AppButton active={!loading} title="Send" onPress={handleSubmit} />
 
           <FormDivider />
 

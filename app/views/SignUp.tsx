@@ -8,12 +8,11 @@ import FormNavigator from "@ui/FormNavigator";
 import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/Auth";
-import axios from "axios";
 import { newUserSchema, yupValidate } from "@utils/validator";
 import { apiRequest } from "app/api/apiRequest";
 import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
 import client from "app/api/client";
-import { SignInResponse } from "./SignIn";
+import useAuth from "app/hooks/useAuth";
 
 interface Props {}
 
@@ -25,6 +24,12 @@ const SignUp: FC<Props> = (props) => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  const { signIn } = useAuth();
+
+  const { email, name, password } = userInfo;
+
+  const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
   const handleChange = (name: string) => {
     return (text: string) => {
@@ -47,18 +52,11 @@ const SignUp: FC<Props> = (props) => {
 
     if (res?.message) {
       showSuccessToast({ title: "Thành công", message: res.message });
-      const signInRes = await apiRequest<SignInResponse>(
-        client.post("/api/auth/sign-in", values)
-      );
-      console.log(signInRes);
+      if (values) signIn(values);
     }
 
     setLoading(false);
   };
-
-  const { email, name, password } = userInfo;
-
-  const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
   return (
     <CustomKeyboardAvoidingView>

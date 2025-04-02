@@ -10,27 +10,9 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/Auth";
 import { userSchema, yupValidate } from "@utils/validator";
 import { showErrorToast } from "app/helper/toastHelper";
-import { apiRequest } from "app/api/apiRequest";
-import client from "app/api/client";
-import { useDispatch } from "react-redux";
-import { updateAuthState } from "app/store/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import useAuth from "app/hooks/useAuth";
 
 interface Props {}
-
-export interface SignInResponse {
-  profile: {
-    id: string;
-    email: string;
-    name: string;
-    verified: boolean;
-    avatar?: string;
-  };
-  tokens: {
-    refresh: string;
-    access: string;
-  };
-}
 
 const SignIn: FC<Props> = (props) => {
   const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
@@ -40,9 +22,7 @@ const SignIn: FC<Props> = (props) => {
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-
+  const { signIn } = useAuth();
   const handleChange = (name: string) => {
     return (text: string) => {
       setUserInfo({ ...userInfo, [name]: text });
@@ -50,26 +30,12 @@ const SignIn: FC<Props> = (props) => {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
     const { values, error } = await yupValidate(userSchema, userInfo);
 
     if (error) {
-      setLoading(false);
       return showErrorToast({ title: "Lỗi", message: error });
     }
-
-    const res = await apiRequest<SignInResponse>(
-      client.post("/api/auth/sign-in", values)
-    );
-
-    if (res) {
-      // store the token
-      await AsyncStorage.setItem("access-token", res.tokens.access);
-      await AsyncStorage.setItem("refresh-token", res.tokens.refresh);
-      dispatch(updateAuthState({ profile: res.profile, pending: false }));
-    }
-
-    setLoading(false);
+    if (values) signIn(values);
   };
 
   const { email, password } = userInfo;
@@ -97,7 +63,7 @@ const SignIn: FC<Props> = (props) => {
             onChangeText={handleChange("password")}
           />
 
-          <AppButton active={!loading} title="Sign In" onPress={handleSubmit} />
+          <AppButton title="Sign In" onPress={handleSubmit} />
 
           <FormDivider />
 

@@ -10,6 +10,7 @@ import client from "app/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiRequest } from "app/api/apiRequest";
 import Loading from "@ui/Loading";
+import useAuth from "app/hooks/useAuth";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -22,10 +23,9 @@ const MyTheme = {
 interface Props {}
 
 const Navigator: FC<Props> = (props) => {
-  const authState = useSelector(getAuthState);
   const dispatch = useDispatch();
 
-  const loggedIn = authState.profile ? true : false;
+  const { loggedIn, authState } = useAuth();
 
   const fetchAuthState = async () => {
     const token = await AsyncStorage.getItem("access-token");
