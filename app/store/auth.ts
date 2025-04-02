@@ -1,7 +1,13 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
-type Profile = {};
+export type Profile = {
+  id: string;
+  email: string;
+  name: string;
+  verified: boolean;
+  avatar?: string;
+};
 
 interface AuthState {
   profile: null | Profile;
@@ -17,9 +23,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    updateAuthState(state, { payload }: PayloadAction<AuthState>) {
-      state.pending = payload.pending;
-      state.profile = payload.profile;
+    updateAuthState(authState, { payload }: PayloadAction<AuthState>) {
+      authState.pending = payload.pending;
+      authState.profile = payload.profile;
     },
   },
 });
@@ -27,8 +33,8 @@ const authSlice = createSlice({
 export const { updateAuthState } = authSlice.actions;
 
 export const getAuthState = createSelector(
-  (state: RootState) => state.auth,
-  (authState) => authState
+  (state: RootState) => state,
+  (state) => state.auth
 );
 
 export default authSlice.reducer;

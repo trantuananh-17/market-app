@@ -9,10 +9,12 @@ import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { AuthStackParamList } from "app/navigator/Auth";
 import { userSchema, yupValidate } from "@utils/validator";
-import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
-import axios from "axios";
+import { showErrorToast } from "app/helper/toastHelper";
 import { apiRequest } from "app/api/apiRequest";
 import client from "app/api/client";
+import { useDispatch } from "react-redux";
+import { updateAuthState } from "app/store/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Props {}
 
@@ -21,10 +23,10 @@ export interface SignInResponse {
     id: string;
     email: string;
     name: string;
-    verifired: boolean;
+    verified: boolean;
     avatar?: string;
   };
-  token: {
+  tokens: {
     refresh: string;
     access: string;
   };
@@ -39,6 +41,7 @@ const SignIn: FC<Props> = (props) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleChange = (name: string) => {
     return (text: string) => {
@@ -61,7 +64,9 @@ const SignIn: FC<Props> = (props) => {
 
     if (res) {
       // store the token
-      console.log(res);
+      await AsyncStorage.setItem("access-token", res.tokens.access);
+      await AsyncStorage.setItem("refresh-token", res.tokens.refresh);
+      dispatch(updateAuthState({ profile: res.profile, pending: false }));
     }
 
     setLoading(false);

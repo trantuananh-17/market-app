@@ -10,7 +10,7 @@ const inputBackground = "#f0f8ff";
 const border = "#bbdefb";
 const white = "#ffffff";
 const black = "#000000";
-
+const backDrop = "rgba(0, 0, 0, 0.5)";
 // const primary = '1C1C1F';
 
 const colors = {
@@ -26,6 +26,7 @@ const colors = {
   border,
   white,
   black,
+  backDrop,
 };
 
 export default colors;

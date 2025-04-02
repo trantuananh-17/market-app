@@ -1,4 +1,10 @@
-import { SafeAreaView, StyleSheet, StatusBar, Platform } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  Modal,
+} from "react-native";
 import Navigator from "app/navigator";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
