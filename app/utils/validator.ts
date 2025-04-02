@@ -22,6 +22,21 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex =
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]+$/;
 
+const accountValidation = {
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters long.")
+    .matches(
+      passwordRegex,
+      "Password must include: A-Z, a-z, 0-9, and special character (!@#$%^&*)."
+    ),
+};
+
 yup.addMethod(yup.string, "email", function validateEmail(message) {
   return this.matches(emailRegex, {
     message,
@@ -32,16 +47,9 @@ yup.addMethod(yup.string, "email", function validateEmail(message) {
 
 export const newUserSchema = yup.object({
   name: yup.string().required("Name is required"),
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .required("password is required")
-    .min(6, "Password must be at least 6 characters long.")
-    .matches(
-      passwordRegex,
-      "Password must include: A-Z, a-z, 0-9, and special character (!@#$%^&*)."
-    ),
+  ...accountValidation,
+});
+
+export const userSchema = yup.object({
+  ...accountValidation,
 });

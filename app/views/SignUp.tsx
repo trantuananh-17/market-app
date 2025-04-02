@@ -11,9 +11,9 @@ import { AuthStackParamList } from "app/navigator/Auth";
 import axios from "axios";
 import { newUserSchema, yupValidate } from "@utils/validator";
 import { apiRequest } from "app/api/apiRequest";
-import { showMessage } from "react-native-flash-message";
-import Toast from "react-native-toast-message";
 import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
+import client from "app/api/client";
+import { SignInResponse } from "./SignIn";
 
 interface Props {}
 
@@ -42,14 +42,16 @@ const SignUp: FC<Props> = (props) => {
     }
 
     const res = await apiRequest<{ message: string }>(
-      axios.post(
-        "https://market-server-n0st.onrender.com/api/auth/sign-up",
-        values
-      )
+      client.post("/api/auth/sign-up", values)
     );
 
-    if (res?.message)
+    if (res?.message) {
       showSuccessToast({ title: "Thành công", message: res.message });
+      const signInRes = await apiRequest<SignInResponse>(
+        client.post("/api/auth/sign-in", values)
+      );
+      console.log(signInRes);
+    }
 
     setLoading(false);
   };

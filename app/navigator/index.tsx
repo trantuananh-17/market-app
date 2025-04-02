@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
-import SignIn from "@views/SignIn";
-import SignUp from "@views/SignUp";
-import ForgetPassword from "@views/ForgetPassword";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import colors from "@utils/colors";
 import { FC } from "react";
 import Auth from "./Auth";
+import AppNavigator from "./AppNavigator";
+import { useSelector } from "react-redux";
+import { getAuthState } from "app/store/auth";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -18,9 +18,14 @@ const MyTheme = {
 interface Props {}
 
 const Navigator: FC<Props> = (props) => {
+  const authState = useSelector(getAuthState);
+
+  console.log(authState);
+
+  const loggedIn = true;
   return (
     <NavigationContainer theme={MyTheme}>
-      <Auth />
+      {!loggedIn ? <Auth /> : <AppNavigator />}
     </NavigationContainer>
   );
 };
