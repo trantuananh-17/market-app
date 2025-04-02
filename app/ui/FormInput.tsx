@@ -1,12 +1,6 @@
 import colors from "@utils/colors";
 import { FC, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-} from "react-native";
+import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 interface Props extends TextInputProps {}
 

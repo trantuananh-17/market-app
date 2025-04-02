@@ -3,14 +3,15 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import colors from "@utils/colors";
 import { FC, useEffect } from "react";
 import Auth from "./Auth";
-import AppNavigator from "./AppNavigator";
 import { useDispatch, useSelector } from "react-redux";
-import { getAuthState, Profile, updateAuthState } from "app/store/auth";
+import { Profile, updateAuthState } from "app/store/auth";
 import client from "app/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiRequest } from "app/api/apiRequest";
 import Loading from "@ui/Loading";
 import useAuth from "app/hooks/useAuth";
+import TabNavigator from "./TabNavigator";
+import { refeshToken } from "app/api/refreshToken";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -31,13 +32,32 @@ const Navigator: FC<Props> = (props) => {
     const token = await AsyncStorage.getItem("access-token");
     if (token) {
       dispatch(updateAuthState({ pending: true, profile: null }));
-      const res = await apiRequest<{ profile: Profile }>(
+      let res = await apiRequest<{ profile: Profile }>(
         client.get("/api/auth/profile", {
           headers: {
             Authorization: "Bearer " + token,
           },
         })
       );
+
+      if (!res) {
+        const newAccessToken = await refeshToken();
+
+        if (!newAccessToken) {
+          dispatch(updateAuthState({ pending: false, profile: null }));
+          await AsyncStorage.multiRemove(["access-token", "refresh-token"]);
+          return;
+        }
+
+        res = await apiRequest<{ profile: Profile }>(
+          client.get("/api/auth/profile", {
+            headers: {
+              Authorization: "Bearer " + newAccessToken,
+            },
+          })
+        );
+        console.log("Đã đăng nhập");
+      }
 
       if (res) {
         dispatch(updateAuthState({ pending: false, profile: res.profile }));
@@ -51,12 +71,10 @@ const Navigator: FC<Props> = (props) => {
     fetchAuthState();
   }, []);
 
-  console.log(authState.pending);
-
   return (
     <NavigationContainer theme={MyTheme}>
       <Loading visiable={authState.pending} />
-      {!loggedIn ? <Auth /> : <AppNavigator />}
+      {!loggedIn ? <Auth /> : <TabNavigator />}
     </NavigationContainer>
   );
 };

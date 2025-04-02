@@ -9,6 +9,8 @@ import Navigator from "app/navigator";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
 import store from "app/store";
+import SafeScreen from "@components/SafeScreen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   return (
