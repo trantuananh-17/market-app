@@ -11,7 +11,8 @@ import { apiRequest } from "app/api/apiRequest";
 import Loading from "@ui/Loading";
 import useAuth from "app/hooks/useAuth";
 import TabNavigator from "./TabNavigator";
-import { refeshToken } from "app/api/refreshToken";
+import useClient from "app/hooks/useClient";
+import asyncStorage, { Keys } from "app/helper/asyncStorage";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -25,39 +26,20 @@ interface Props {}
 
 const Navigator: FC<Props> = (props) => {
   const dispatch = useDispatch();
-
   const { loggedIn, authState } = useAuth();
+  const { authClient } = useClient();
 
   const fetchAuthState = async () => {
-    const token = await AsyncStorage.getItem("access-token");
+    const token = await asyncStorage.get(Keys.ACCESS_TOKEN);
     if (token) {
       dispatch(updateAuthState({ pending: true, profile: null }));
       let res = await apiRequest<{ profile: Profile }>(
-        client.get("/api/auth/profile", {
+        authClient.get("/api/auth/profile", {
           headers: {
             Authorization: "Bearer " + token,
           },
         })
       );
-
-      if (!res) {
-        const newAccessToken = await refeshToken();
-
-        if (!newAccessToken) {
-          dispatch(updateAuthState({ pending: false, profile: null }));
-          await AsyncStorage.multiRemove(["access-token", "refresh-token"]);
-          return;
-        }
-
-        res = await apiRequest<{ profile: Profile }>(
-          client.get("/api/auth/profile", {
-            headers: {
-              Authorization: "Bearer " + newAccessToken,
-            },
-          })
-        );
-        console.log("Đã đăng nhập");
-      }
 
       if (res) {
         dispatch(updateAuthState({ pending: false, profile: res.profile }));
