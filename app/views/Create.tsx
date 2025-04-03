@@ -1,4 +1,6 @@
 import OptionModal from "@components/OptionModal";
+import AppButton from "@ui/AppButton";
+import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import CategoryOption from "@ui/product/CategoryOption";
 import CategorySelector from "@ui/product/CategorySelector";
 import CreateHeader from "@ui/product/CreateHeader";
@@ -28,47 +30,47 @@ const Create: FC<Props> = (props) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 47 : 0}
-    >
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.card}>
-            <CreateHeader />
+    <View style={styles.container}>
+      <CustomKeyboardAvoidingView>
+        <View style={styles.card}>
+          <CreateHeader />
 
-            <FormInput title="Name" placeholder="Name product..." />
+          <FormInput title="Name" placeholder="Name product..." />
 
-            <FileSelector />
+          <CategorySelector icon="caretdown" onPress={handlePress} />
 
-            <FormInput title="Price" placeholder="Prices... " />
+          <OptionModal
+            visible={showCategoryModal}
+            onRequestClose={setShowCategoryModal}
+            options={categories}
+            renderItem={(item) => {
+              return <CategoryOption name={item.name} icon={item.icon} />;
+            }}
+            onPress={(item) => {
+              console.log(item);
+            }}
+          />
 
-            <FormInput title="Description" placeholder="Description... " />
+          <FormInput title="Price" placeholder="Prices... " />
 
-            <DatePicker
-              title="Purchasing Date: "
-              value={new Date()}
-              onChange={() => {}}
-            />
+          <FormInput
+            title="Description"
+            placeholder="Description... "
+            multiline={true}
+          />
 
-            <CategorySelector icon="caretdown" onPress={handlePress} />
+          <DatePicker
+            title="Purchasing Date: "
+            value={new Date()}
+            onChange={() => {}}
+          />
 
-            <OptionModal
-              visible={showCategoryModal}
-              onRequestClose={setShowCategoryModal}
-              options={categories}
-              renderItem={(item) => {
-                return <CategoryOption name={item.name} icon={item.icon} />;
-              }}
-              onPress={(item) => {
-                console.log(item);
-              }}
-            />
-          </View>
+          <FileSelector />
+
+          <AppButton title="Create New Product" />
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </CustomKeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -77,8 +79,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     padding: 16,
+    paddingVertical: 40,
   },
   card: {
+    flex: 1,
     backgroundColor: colors.white,
     borderRadius: 16,
     padding: 20,

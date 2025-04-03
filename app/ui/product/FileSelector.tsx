@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 5,
+    marginVertical: 15,
     width: 70,
     height: 70,
     borderWidth: 2,

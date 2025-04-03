@@ -24,13 +24,10 @@ const OptionModal = <T extends unknown>({
   renderItem,
   onPress,
 }: Props<T>) => {
+  const handleClose = () => onRequestClose(!visible);
   return (
-    <Modal
-      transparent={true}
-      visible={visible}
-      onRequestClose={() => onRequestClose(!visible)}
-    >
-      <View style={styles.container}>
+    <Modal transparent={true} visible={visible} onRequestClose={handleClose}>
+      <Pressable onPress={handleClose} style={styles.container}>
         <View style={styles.innerContainer}>
           <ScrollView>
             {options.map((item, index) => {
@@ -42,7 +39,7 @@ const OptionModal = <T extends unknown>({
             })}
           </ScrollView>
         </View>
-      </View>
+      </Pressable>
     </Modal>
   );
 };
@@ -60,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     padding: 10,
     borderRadius: 5,
-    maxHeight: 200,
+    maxHeight: 400,
     width: "100%",
   },
 });

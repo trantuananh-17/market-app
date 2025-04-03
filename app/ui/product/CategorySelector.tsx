@@ -23,14 +23,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    marginBottom: 15,
+    marginBottom: 20,
     padding: 8,
     borderWidth: 1,
     borderColor: colors.deActive,
     borderRadius: 5,
   },
   categoryTitle: {
-    color: colors.primary,
+    color: colors.textPrimary,
   },
 });
 

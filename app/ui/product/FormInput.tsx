@@ -1,13 +1,21 @@
 import colors from "@utils/colors";
 import { FC, useState } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+} from "react-native";
+import { number } from "yup";
 
-interface Props {
+interface Props extends TextInputProps {
   title: string;
   placeholder: string;
+  multiline?: boolean;
 }
 
-const FormInput: FC<Props> = ({ title, placeholder }) => {
+const FormInput: FC<Props> = ({ title, placeholder, multiline }) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -26,6 +34,7 @@ const FormInput: FC<Props> = ({ title, placeholder }) => {
         onBlur={() => {
           setIsFocused(false);
         }}
+        multiline={multiline}
       />
     </View>
   );
@@ -49,7 +58,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 0,
+    marginBottom: 15,
   },
   borderDeActive: {
     borderWidth: 1,
