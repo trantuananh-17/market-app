@@ -1,6 +1,6 @@
 import colors from "@utils/colors";
 import { FC } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 
 interface Props {
   icon: JSX.Element;

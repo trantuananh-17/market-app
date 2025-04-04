@@ -53,3 +53,18 @@ export const newUserSchema = yup.object({
 export const userSchema = yup.object({
   ...accountValidation,
 });
+
+export const productSchema = yup.object({
+  description: yup.string().required("Description name is required"),
+  price: yup
+    .string()
+    .transform((value) => {
+      if (isNaN(+value)) return "";
+
+      return value;
+    })
+    .required("Price is required"),
+  category: yup.string().required("Category is required"),
+  name: yup.string().required("Product name is required"),
+  purchasingDate: yup.date().required("Purchasing date is required"),
+});

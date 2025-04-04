@@ -1,13 +1,15 @@
 import { FC } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import colors from "@utils/colors";
 
-interface Props {}
+interface Props {
+  onPress?(): void;
+}
 
-const FileSelector: FC<Props> = (props) => {
+const FileSelector: FC<Props> = ({ onPress }) => {
   return (
-    <Pressable style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <View style={styles.iconContainer}>
         <FontAwesome5 name="images" size={40} color="black" />
       </View>
@@ -17,7 +19,8 @@ const FileSelector: FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
   },
   iconContainer: {
     alignItems: "center",

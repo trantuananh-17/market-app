@@ -5,13 +5,16 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface Props {
   icon: string;
+  name: string;
   onPress(): void;
 }
 
-const CategorySelector: FC<Props> = ({ icon, onPress }) => {
+const CategorySelector: FC<Props> = ({ icon, name, onPress }) => {
   return (
     <Pressable style={styles.container} onPress={onPress}>
-      <Text style={styles.categoryTitle}>Category</Text>
+      <Text style={styles.categoryTitle}>
+        {name !== "" ? name : "Category"}
+      </Text>
       <AntDesign name={icon as any} size={24} color="black" />
     </Pressable>
   );

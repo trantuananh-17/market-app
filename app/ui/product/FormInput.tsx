@@ -7,7 +7,6 @@ import {
   TextInput,
   TextInputProps,
 } from "react-native";
-import { number } from "yup";
 
 interface Props extends TextInputProps {
   title: string;
@@ -15,7 +14,7 @@ interface Props extends TextInputProps {
   multiline?: boolean;
 }
 
-const FormInput: FC<Props> = ({ title, placeholder, multiline }) => {
+const FormInput: FC<Props> = ({ title, placeholder, multiline, ...props }) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -35,6 +34,7 @@ const FormInput: FC<Props> = ({ title, placeholder, multiline }) => {
           setIsFocused(false);
         }}
         multiline={multiline}
+        {...props}
       />
     </View>
   );
