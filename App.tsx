@@ -5,11 +5,11 @@ import {
   Platform,
   Modal,
 } from "react-native";
-import Navigator from "app/navigator";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
 import store from "app/store";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Navigator from "app/navigation";
 
 export default function App() {
   return (

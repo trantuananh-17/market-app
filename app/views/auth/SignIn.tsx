@@ -44,7 +44,7 @@ const SignIn: FC<Props> = (props) => {
     <CustomKeyboardAvoidingView>
       <View style={styles.innerContainer}>
         <WelcomeHeader
-          imageUrl={require("../../assets/images/hero.png")}
+          imageUrl={require("../../../assets/images/hero.png")}
           heading="Welcome Back!"
           subHeading="Sign in to explore, connect, and start trading with people near you."
         />

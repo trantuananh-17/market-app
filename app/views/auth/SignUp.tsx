@@ -62,7 +62,7 @@ const SignUp: FC<Props> = (props) => {
     <CustomKeyboardAvoidingView>
       <View style={styles.innerContainer}>
         <WelcomeHeader
-          imageUrl={require("../../assets/images/heroSignUp.png")}
+          imageUrl={require("../../../assets/images/heroSignUp.png")}
           heading="Join the Marketplace."
           subHeading="Create your account to buy, sell, and chat directly with real people around you."
         />

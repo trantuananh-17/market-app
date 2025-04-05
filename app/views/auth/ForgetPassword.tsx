@@ -49,7 +49,7 @@ const ForgetPassword: FC<Props> = (props) => {
     <CustomKeyboardAvoidingView>
       <View style={styles.innerContainer}>
         <WelcomeHeader
-          imageUrl={require("../../assets/images/heroForgotPassword.png")}
+          imageUrl={require("../../../assets/images/heroForgotPassword.png")}
           heading="Reset Your Password."
           subHeading="Don't worry — we'll help you get back into your account in no time."
         />
