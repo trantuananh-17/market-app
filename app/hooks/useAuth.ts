@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SignIn from "@views/SignIn";
+import SignIn from "@views/auth/SignIn";
 import { apiRequest } from "app/api/apiRequest";
 import client from "app/api/client";
 import asyncStorage, { Keys } from "app/helper/asyncStorage";

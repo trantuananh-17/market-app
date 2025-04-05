@@ -2,8 +2,8 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import AppNavigator from "./AppNavigator";
-import ProfileNavigator from "./ProfileNavigator";
+import AppNavigator from "./app/AppNavigator";
+import ProfileNavigator from "./app/ProfileNavigator";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Create from "@views/Create";
 

@@ -7,10 +7,10 @@ import FormDivider from "@ui/FormDivider";
 import FormNavigator from "@ui/FormNavigator";
 import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { AuthStackParamList } from "app/navigator/Auth";
 import { userSchema, yupValidate } from "@utils/validator";
 import { showErrorToast } from "app/helper/toastHelper";
 import useAuth from "app/hooks/useAuth";
+import { AuthStackParamList } from "app/navigation/auth/Auth";
 
 interface Props {}
 
