@@ -3,7 +3,6 @@ import HomeRoute from "@components/home/HomeRoute";
 import { FC, useState } from "react";
 import { View, StyleSheet, useWindowDimensions, Text } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import PagerView from "react-native-pager-view";
 
 interface RouteType {
   key: string;
