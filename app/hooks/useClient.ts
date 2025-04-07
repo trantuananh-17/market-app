@@ -4,15 +4,16 @@ import useAuth from "./useAuth";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import asyncStorage, { Keys } from "app/helper/asyncStorage";
 import { apiRequest } from "app/api/apiRequest";
-import { useDispatch } from "react-redux";
-import { updateAuthState } from "app/store/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthState, updateAuthState } from "app/store/auth";
 
 const authClient = axios.create({ baseURL: baseURL });
 
 type Response = { tokens: { refresh: string; access: string } };
 
 const useClient = () => {
-  const { authState } = useAuth();
+  // const { authState } = useAuth();
+  const authState = useSelector(getAuthState);
 
   const dispatch = useDispatch();
 
@@ -47,6 +48,13 @@ const useClient = () => {
     if (res?.tokens) {
       failedRequest.response.config.headers.Authorization =
         "Bearer " + res.tokens.access;
+
+      if (failedRequest.response.config.url === "/api/auth/sign-out") {
+        failedRequest.response.config.data = {
+          refreshToken: res.tokens.refresh,
+        };
+      }
+
       await asyncStorage.save(Keys.ACCESS_TOKEN, res.tokens.access);
       await asyncStorage.save(Keys.REFRESH_TOKEN, res.tokens.refresh);
       dispatch(

@@ -1,10 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "./client";
 
-export const refeshToken = async () => {
+export const refreshToken = async () => {
   const refreshToken = await AsyncStorage.getItem("refresh-token");
-
-  console.log(refeshToken);
 
   if (!refreshToken) return null;
 

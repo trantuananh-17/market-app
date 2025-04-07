@@ -17,7 +17,9 @@ const CustomKeyboardAvoidingView: FC<Props> = ({ children }) => {
       style={styles.container}
       keyboardVerticalOffset={20}
     >
-      <ScrollView>{children}</ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        {children}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

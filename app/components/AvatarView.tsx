@@ -31,7 +31,8 @@ const AvatarView: FC<Props> = ({ size = 50, uri }) => {
 const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
-    borderWidth: 1,
+    borderWidth: 4,
+    borderColor: colors.white,
   },
   flex1: {
     flex: 1,

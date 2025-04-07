@@ -1,10 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import SignIn from "@views/auth/SignIn";
 import { apiRequest } from "app/api/apiRequest";
 import client from "app/api/client";
 import asyncStorage, { Keys } from "app/helper/asyncStorage";
 import { getAuthState, updateAuthState } from "app/store/auth";
 import { useDispatch, useSelector } from "react-redux";
+import useClient from "./useClient";
 
 type UserInfo = {
   email: string;
@@ -26,6 +25,7 @@ export interface SignInResponse {
 }
 
 const useAuth = () => {
+  const { authClient } = useClient();
   const dispatch = useDispatch();
   const authState = useSelector(getAuthState);
 
@@ -51,8 +51,24 @@ const useAuth = () => {
     }
   };
 
+  const signOut = async () => {
+    const token = await asyncStorage.get(Keys.REFRESH_TOKEN);
+
+    if (token) {
+      dispatch(updateAuthState({ profile: authState.profile, pending: true }));
+
+      await authClient.post("/api/auth/sign-out", {
+        refreshToken: token,
+      });
+
+      await asyncStorage.remove(Keys.REFRESH_TOKEN);
+      await asyncStorage.remove(Keys.ACCESS_TOKEN);
+      dispatch(updateAuthState({ profile: null, pending: false }));
+    }
+  };
+
   const loggedIn = authState.profile ? true : false;
-  return { signIn, authState, loggedIn };
+  return { signIn, authState, loggedIn, signOut };
 };
 
 export default useAuth;

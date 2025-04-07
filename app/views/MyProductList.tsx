@@ -3,10 +3,10 @@ import { View, Text, StyleSheet } from "react-native";
 
 interface Props {}
 
-const Message: FC<Props> = (props) => {
+const MyProductList: FC<Props> = (props) => {
   return (
     <View style={styles.container}>
-      <Text> Đây là màn hình message</Text>
+      <Text>Đây là danh sách sản phẩm của tôi</Text>
     </View>
   );
 };
@@ -15,4 +15,4 @@ const styles = StyleSheet.create({
   container: {},
 });
 
-export default Message;
+export default MyProductList;

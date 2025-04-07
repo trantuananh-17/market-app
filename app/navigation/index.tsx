@@ -20,6 +20,16 @@ const MyTheme = {
   },
 };
 
+type ProfileRes = {
+  profile: {
+    id: string;
+    name: string;
+    email: string;
+    verified: boolean;
+    avatar?: string;
+  };
+};
+
 interface Props {}
 
 const Navigator: FC<Props> = (props) => {
@@ -31,7 +41,7 @@ const Navigator: FC<Props> = (props) => {
     const token = await asyncStorage.get(Keys.ACCESS_TOKEN);
     if (token) {
       dispatch(updateAuthState({ pending: true, profile: null }));
-      let res = await apiRequest<{ profile: Profile }>(
+      let res = await apiRequest<ProfileRes>(
         authClient.get("/api/auth/profile", {
           headers: {
             Authorization: "Bearer " + token,
@@ -40,7 +50,12 @@ const Navigator: FC<Props> = (props) => {
       );
 
       if (res) {
-        dispatch(updateAuthState({ pending: false, profile: res.profile }));
+        dispatch(
+          updateAuthState({
+            pending: false,
+            profile: { ...res.profile, accessToken: token },
+          })
+        );
       } else {
         dispatch(updateAuthState({ pending: false, profile: null }));
       }
