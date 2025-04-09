@@ -86,9 +86,6 @@ const Create: FC<Props> = (props) => {
       })
     );
 
-    console.log(formData);
-
-    console.log(res);
 
     if (res?.message) {
       showSuccessToast({
