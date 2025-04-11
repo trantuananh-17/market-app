@@ -8,30 +8,20 @@ import { apiRequest } from "app/api/apiRequest";
 import useClient from "app/hooks/useClient";
 import { FC, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
+import { Product } from "./ProductInfo";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { ProfileNavigatorParam } from "app/navigation/app/ProfileNavigator";
+import { formatDate } from "app/helper/date";
+import { formatPrice } from "app/helper/price";
 
 interface Props {}
-
-type Product = {
-  id: string;
-  name: string;
-  thumbnail: string;
-  category: string;
-  price: number;
-  image?: string[];
-  date: Date;
-  description: string;
-  seller: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-};
 
 type ListingRes = {
   products: Product[];
 };
 
 const MyProductList: FC<Props> = (props) => {
+  const { navigate } = useNavigation<NavigationProp<ProfileNavigatorParam>>();
   const [Listings, setListings] = useState<Product[]>([]);
   const { authClient } = useClient();
 
@@ -40,16 +30,12 @@ const MyProductList: FC<Props> = (props) => {
       authClient.get("/api/product/listings")
     );
 
-    console.log(res);
-
     if (res) setListings(res.products);
   };
 
   useEffect(() => {
     fetchList();
   }, []);
-
-  console.log(Listings);
 
   return (
     <View>
@@ -64,12 +50,17 @@ const MyProductList: FC<Props> = (props) => {
             <View style={styles.productItem}>
               <ProductImage uri={item.thumbnail} />
               <View style={styles.info}>
-                <Text style={styles.textName}>{item.name}</Text>
-                <Text>Giá: {item.price}</Text>
-                <Text>Ngày đăng: </Text>
+                <Text style={styles.textName} numberOfLines={2}>
+                  {item.name}
+                </Text>
+                <Text>Giá: {formatPrice(item.price)}</Text>
+                <Text>Ngày đăng: {formatDate(item.date, "dd/MM/yyyy")}</Text>
               </View>
               <View style={styles.button}>
-                <ProductButton title="Chỉnh sửa" />
+                <ProductButton
+                  title="Chỉnh sửa"
+                  onPress={() => navigate("ProductInfo", { product: item })}
+                />
               </View>
             </View>
           );
