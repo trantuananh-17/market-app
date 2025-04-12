@@ -6,7 +6,7 @@ import Feather from "@expo/vector-icons/Feather";
 interface Props {
   title: string;
   color: string;
-  onPress?(product): void;
+  onPress?(): void;
 }
 
 const ProductButton: FC<Props> = ({ title, onPress, color }) => {

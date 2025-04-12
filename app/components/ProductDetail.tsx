@@ -1,19 +1,17 @@
-import { Product } from "@views/ProductInfo";
 import { formatDate } from "app/helper/date";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import AvatarView from "./AvatarView";
 import colors from "@utils/colors";
 import { formatPrice } from "app/helper/price";
 import ImageSlider from "./ImageSlider";
+import { Product } from "app/store/listing";
 
 interface Props {
   product: Product;
 }
 
 const ProductDetail: FC<Props> = ({ product }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageSlider images={product.image} />

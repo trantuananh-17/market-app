@@ -7,13 +7,19 @@ import { apiRequest } from "app/api/apiRequest";
 import useClient from "app/hooks/useClient";
 import { FC, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
-import { Product } from "./ProductInfo";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ProfileNavigatorParam } from "app/navigation/app/ProfileNavigator";
 import { formatDate } from "app/helper/date";
 import { formatPrice } from "app/helper/price";
 import { showSuccessToast } from "app/helper/toastHelper";
 import Loading from "@ui/Loading";
+import {
+  deleteItem,
+  getListings,
+  Product,
+  updateListings,
+} from "app/store/listing";
+import { useDispatch, useSelector } from "react-redux";
 
 interface Props {}
 
@@ -23,10 +29,13 @@ type ListingRes = {
 
 const MyProductList: FC<Props> = (props) => {
   const { navigate } = useNavigation<NavigationProp<ProfileNavigatorParam>>();
-  const [Listings, setListings] = useState<Product[]>([]);
+  // const [listings, setListings] = useState<Product[]>([]);
   const { authClient } = useClient();
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(false);
-  const [isFetch, setIsFetch] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const listings = useSelector(getListings);
 
   const confirmDelete = async (productId: string) => {
     if (!productId) return;
@@ -37,8 +46,10 @@ const MyProductList: FC<Props> = (props) => {
     );
     setLoading(false);
 
-    if (res?.message)
+    if (res?.message) {
+      dispatch(deleteItem(productId));
       showSuccessToast({ title: "Thành công", message: res.message });
+    }
 
     setIsFetch(true);
   };
@@ -59,31 +70,28 @@ const MyProductList: FC<Props> = (props) => {
   };
 
   const fetchList = async () => {
+    setFetching(true);
     const res = await apiRequest<ListingRes>(
       authClient.get("/api/product/listings")
     );
+    setFetching(false);
 
-    if (res) setListings(res.products);
+    if (res) dispatch(updateListings(res.products));
   };
-
-  // useEffect(() => {
-  //   fetchList();
-
-  // }, [isFetch]);
 
   useEffect(() => {
     fetchList();
-    setIsFetch(false);
-    console.log("loaded");
-  }, [isFetch]);
+  }, []);
 
   return (
-    <View>
+    <View style={styles.body}>
       <AppHeader backButton={<BackButton />} />
 
       <FlatList
+        refreshing={fetching}
+        onRefresh={fetchList}
         style={styles.container}
-        data={Listings}
+        data={listings}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           return (
@@ -118,6 +126,9 @@ const MyProductList: FC<Props> = (props) => {
 };
 
 const styles = StyleSheet.create({
+  body: {
+    flex: 1,
+  },
   container: {
     paddingHorizontal: 10,
     paddingVertical: 15,
