@@ -29,30 +29,13 @@ type Props = NativeStackScreenProps<ProfileNavigatorParam, "ProductInfo">;
 
 const ProductInfo: FC<Props> = ({ route }) => {
   const { product } = route.params;
-  const { authState } = useAuth();
-  const [showMenu, setShowMenu] = useState(false);
-
-  const menuOptions = [];
-
-  const isAdmin = authState.profile?.id === product?.seller.id;
 
   return (
     <>
-      <AppHeader
-        backButton={<BackButton />}
-        right={
-          <OptionButton visible={isAdmin} onPress={() => setShowMenu(true)} />
-        }
-      />
+      <AppHeader backButton={<BackButton />} />
       <View style={styles.container}>
         {product ? <ProductDetail product={product} /> : <></>}
       </View>
-      <OptionModal
-        options={menuOptions}
-        renderItem={() => <></>}
-        visible={showMenu}
-        onRequestClose={setShowMenu}
-      />
     </>
   );
 };

@@ -11,6 +11,7 @@ const border = "#bbdefb";
 const white = "#ffffff";
 const black = "#000000";
 const backDrop = "rgba(0, 0, 0, 0.5)";
+const red = "#CF0808";
 // const primary = '1C1C1F';
 const COLORS = [
   "#1976D2",
@@ -37,6 +38,7 @@ const colors = {
   black,
   backDrop,
   COLORS,
+  red,
 };
 
 export default colors;
