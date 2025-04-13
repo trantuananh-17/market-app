@@ -14,9 +14,10 @@ interface Props {
   images: string[];
   onPress?(item: string): void;
   onDelete?(item: string): void;
+  onLongPress?(item: string): void;
 }
 
-const ImageList: FC<Props> = ({ images, onPress, onDelete }) => {
+const ImageList: FC<Props> = ({ images, onPress, onDelete, onLongPress }) => {
   return (
     <FlatList
       data={images}
@@ -36,6 +37,7 @@ const ImageList: FC<Props> = ({ images, onPress, onDelete }) => {
             <Pressable
               onPress={() => onPress?.(item)}
               style={StyleSheet.absoluteFillObject}
+              onLongPress={() => onLongPress?.(item)}
             />
           </View>
         );

@@ -50,8 +50,6 @@ const MyProductList: FC<Props> = (props) => {
       dispatch(deleteItem(productId));
       showSuccessToast({ title: "Thành công", message: res.message });
     }
-
-    setIsFetch(true);
   };
 
   const onDeletePress = (item: Product) => {
@@ -108,7 +106,7 @@ const MyProductList: FC<Props> = (props) => {
                 <ProductButton
                   title="edit"
                   color={colors.primary}
-                  onPress={() => navigate("ProductInfo", { product: item })}
+                  onPress={() => navigate("EditProduct", { product: item })}
                 />
                 <ProductButton
                   title="delete"

@@ -18,6 +18,7 @@ import { productSchema, yupValidate } from "@utils/validator";
 import mime from "mime";
 import useClient from "app/hooks/useClient";
 import { apiRequest } from "app/api/apiRequest";
+import CategoryOptions from "@components/CategoryOptions";
 
 interface Props {}
 
@@ -86,7 +87,6 @@ const Create: FC<Props> = (props) => {
       })
     );
 
-
     if (res?.message) {
       showSuccessToast({
         title: "Thành công",
@@ -129,22 +129,9 @@ const Create: FC<Props> = (props) => {
             onChangeText={handleChange("name")}
           />
 
-          <CategorySelector
-            icon="caretdown"
-            name={category}
-            onPress={handlePress}
-          />
-
-          <OptionModal
-            visible={showCategoryModal}
-            onRequestClose={setShowCategoryModal}
-            options={categories}
-            renderItem={(item) => {
-              return <CategoryOption name={item.name} icon={item.icon} />;
-            }}
-            onPress={(item) => {
-              setProductInfo({ ...productInfo, category: item.name });
-            }}
+          <CategoryOptions
+            title={category}
+            onSelect={handleChange("category")}
           />
 
           <FormInput

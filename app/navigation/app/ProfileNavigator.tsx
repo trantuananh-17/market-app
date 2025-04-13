@@ -1,8 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ChangeInfo from "@views/ChangeInfo";
+import ChatWindow from "@views/ChatWindow";
+import EditProduct from "@views/EditProduct";
 import MyProductList from "@views/MyProductList";
-import ProductInfo, { Product } from "@views/ProductInfo";
+import ProductInfo from "@views/ProductInfo";
 import Profile from "@views/Profile";
+import { Product } from "app/store/listing";
 import { FC } from "react";
 import { StyleSheet } from "react-native";
 
@@ -15,6 +18,8 @@ export type ProfileNavigatorParam = {
   MyProductList: undefined;
   ChangeInfo: undefined;
   ProductInfo: { product?: Product };
+  EditProduct: { product: Product };
+  ChatWindow: undefined;
 };
 
 const ProfileNavigator: FC<Props> = (props) => {
@@ -24,6 +29,8 @@ const ProfileNavigator: FC<Props> = (props) => {
       <Stack.Screen name="MyProductList" component={MyProductList} />
       <Stack.Screen name="ChangeInfo" component={ChangeInfo} />
       <Stack.Screen name="ProductInfo" component={ProductInfo} />
+      <Stack.Screen name="ChatWindow" component={ChatWindow} />
+      <Stack.Screen name="EditProduct" component={EditProduct} />
     </Stack.Navigator>
   );
 };
