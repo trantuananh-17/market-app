@@ -65,10 +65,6 @@ const EditProduct: FC<Props> = ({ route }) => {
       "https://res.cloudinary.com"
     );
 
-    const images = product.image;
-    const newImages = images?.filter((img) => img !== imageSelect);
-    setProduct({ ...product, image: newImages });
-
     if (notLocalImage) {
       setLoading(true);
       const splittedItems = selectedImage.split("/");
@@ -80,6 +76,9 @@ const EditProduct: FC<Props> = ({ route }) => {
 
       setLoading(false);
     }
+    const images = product.image;
+    const newImages = images?.filter((img) => img !== imageSelect);
+    setProduct({ ...product, image: newImages });
   };
 
   const handleSelectImages = async () => {
@@ -131,21 +130,23 @@ const EditProduct: FC<Props> = ({ route }) => {
       else formData.append(key, value);
 
       product.image?.forEach((img, index) => {
-        if (!img.startsWith("https://res.cloudinary.com"))
+        if (!img.startsWith("https://res.cloudinary.com")) {
           formData.append("images", {
             uri: img,
             name: "image_" + index,
             type: mime.getType(img) || "image/jpg",
           } as any);
+        }
       });
     }
     console.log(formData);
-    console.log(product.image?.length);
 
     // send update product
     const res = await apiRequest<{ message: string }>(
       authClient.patch("/api/product/" + product.id, formData)
     );
+
+    console.log(res?.message);
 
     if (res) {
       setBusy(false);
