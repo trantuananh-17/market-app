@@ -10,17 +10,17 @@ import {
 
 interface Props {
   title: string;
-  active?: boolean;
+  visiable?: boolean;
   onPress?(): void;
 }
 
-const AppButton: FC<Props> = ({ title, active = true, onPress }) => {
+const AppButton: FC<Props> = ({ title, visiable = false, onPress }) => {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.button, active ? styles.btnActive : styles.btnDeActive]}
+      style={[styles.button, !visiable ? styles.btnActive : styles.btnDeActive]}
     >
-      {active ? (
+      {!visiable ? (
         <Text style={styles.title}>{title}</Text>
       ) : (
         <ActivityIndicator color="#fff" />

@@ -10,33 +10,168 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import FormInput from "@ui/product/FormInput";
 import DatePicker from "@ui/product/DatePicker";
 import OptionModal from "@components/OptionModal";
+import useClient from "app/hooks/useClient";
+import { apiRequest } from "app/api/apiRequest";
+import { selectImages } from "app/helper/selectImages";
+import CategoryOptions from "@components/CategoryOptions";
+import AppButton from "@ui/AppButton";
+import { productSchema, yupValidate } from "@utils/validator";
+import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
+import mime from "mime";
+import Loading from "@ui/Loading";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParam, "EditProduct">;
+
+type ProductInfo = {
+  name: string;
+  description: string;
+  category: string;
+  price: string;
+  purchasingDate: Date;
+};
+
 const imageOptions = [
   { value: "Use as Thumbnail", id: "thumb" },
   { value: "Remove Image", id: "remove" },
 ];
 
 const EditProduct: FC<Props> = ({ route }) => {
-  const { product } = route.params;
-
   const [selectedImage, setSelectedImage] = useState("");
   const [showImageOptions, setShowImageOptions] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [product, setProduct] = useState({
+    ...route.params.product,
+    price: route.params.product.price.toString(),
+    date: new Date(route.params.product.date),
+  });
+  const { authClient } = useClient();
+
+  const onPress = (image: string) => {
+    setSelectedImage(image);
+  };
+
   const onLongPress = (image: string) => {
     setSelectedImage(image);
     setShowImageOptions(true);
   };
-  const removeSelectedImage = () => {
-    console.log(selectedImage);
+
+  const removeSelectedImage = async () => {
+    handleRemoveImageFromUI(selectedImage);
   };
+
+  const handleRemoveImageFromUI = async (imageSelect: string) => {
+    const notLocalImage = selectedImage.startsWith(
+      "https://res.cloudinary.com"
+    );
+
+    const images = product.image;
+    const newImages = images?.filter((img) => img !== imageSelect);
+    setProduct({ ...product, image: newImages });
+
+    if (notLocalImage) {
+      setLoading(true);
+      const splittedItems = selectedImage.split("/");
+      const imageId = splittedItems[splittedItems.length - 1].split(".")[0];
+
+      await apiRequest(
+        authClient.delete(`/api/product/image/${product.id}/${imageId}`)
+      );
+
+      setLoading(false);
+    }
+  };
+
+  const handleSelectImages = async () => {
+    const newImages = await selectImages();
+    const oldImages = product.image || [];
+    const images = oldImages.concat(newImages);
+    if (images.length > 5) {
+      showErrorToast({ title: "Lỗi", message: "Không được chọn quá 5 ảnh" });
+      setProduct({ ...product, image: [...oldImages] });
+      return;
+    }
+    setProduct({ ...product, image: [...images] });
+  };
+
+  const setThumbnailProduct = () => {
+    if (selectedImage.startsWith("https://res.cloudinary.com")) {
+      setProduct({ ...product, thumbnail: selectedImage });
+    }
+  };
+
+  const handleOnUpdate = async () => {
+    setBusy(true);
+    const dataToUpdate: ProductInfo = {
+      name: product.name,
+      category: product.category,
+      description: product.description,
+      price: product.price,
+      purchasingDate: product.date,
+    };
+
+    const { error } = await yupValidate(productSchema, dataToUpdate);
+
+    if (error) {
+      setBusy(false);
+      return showErrorToast({ title: "Lỗi", message: error });
+    }
+
+    const formData = new FormData();
+
+    if (product.thumbnail) {
+      formData.append("thumbnail", product.thumbnail);
+    }
+    type productInfoKeys = keyof typeof dataToUpdate;
+
+    for (let key in dataToUpdate) {
+      const value = dataToUpdate[key as productInfoKeys];
+
+      if (value instanceof Date) formData.append(key, value.toISOString());
+      else formData.append(key, value);
+
+      product.image?.forEach((img, index) => {
+        if (!img.startsWith("https://res.cloudinary.com"))
+          formData.append("images", {
+            uri: img,
+            name: "image_" + index,
+            type: mime.getType(img) || "image/jpg",
+          } as any);
+      });
+    }
+    console.log(formData);
+    console.log(product.image?.length);
+
+    // send update product
+    const res = await apiRequest<{ message: string }>(
+      authClient.patch("/api/product/" + product.id, formData)
+    );
+
+    if (res) {
+      setBusy(false);
+      showSuccessToast({
+        title: "Thành công",
+        message: "Cập nhật sản phẩm thành công",
+      });
+    }
+
+    setBusy(false);
+  };
+
   return (
     <>
       <AppHeader backButton={<BackButton />} />
       <View style={styles.container}>
         <ScrollView>
           <Text style={styles.title}>Images</Text>
-          <ImageList images={product?.image || []} onLongPress={onLongPress} />
-          <Pressable style={styles.imageSelector}>
+          <ImageList
+            images={product?.image || []}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            onDelete={handleRemoveImageFromUI}
+          />
+
+          <Pressable onPress={handleSelectImages} style={styles.imageSelector}>
             <FontAwesome5 name="images" size={30} color={colors.black} />
           </Pressable>
 
@@ -44,21 +179,43 @@ const EditProduct: FC<Props> = ({ route }) => {
             title="Name"
             placeholder="Product name"
             value={product?.name}
+            onChangeText={(name) => setProduct({ ...product, name })}
+          />
+
+          <CategoryOptions
+            onSelect={(category) => setProduct({ ...product, category })}
+            title={product.category}
           />
 
           <FormInput
-            title="Name"
+            title="Price"
             placeholder="Price"
             keyboardType="numeric"
             value={product?.price.toString()}
+            onChangeText={(price) => setProduct({ ...product, price })}
           />
           <DatePicker
-            value={new Date(product.date)}
+            value={product.date}
             title="Purchasing Date: "
-            onChange={() => {}}
+            onChange={(date) => setProduct({ ...product, date })}
+          />
+
+          <FormInput
+            title="Description"
+            placeholder="Description..."
+            value={product?.description}
+            onChangeText={(description) =>
+              setProduct({ ...product, description })
+            }
+          />
+          <AppButton
+            visiable={busy}
+            title="Update Product"
+            onPress={handleOnUpdate}
           />
         </ScrollView>
       </View>
+      <Loading visiable={loading} />
       <OptionModal
         visible={showImageOptions}
         onRequestClose={setShowImageOptions}
@@ -67,8 +224,8 @@ const EditProduct: FC<Props> = ({ route }) => {
           return <Text style={styles.option}>{option.value}</Text>;
         }}
         onPress={({ id }) => {
-          if (id === "thumb") {
-          }
+          if (id === "thumb") setThumbnailProduct();
+
           if (id === "remove") removeSelectedImage();
         }}
       />

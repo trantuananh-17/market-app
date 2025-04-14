@@ -27,7 +27,7 @@ const DatePicker: FC<Props> = ({ title, value, onChange }) => {
       <Text style={styles.title}>{title}</Text>
       {!isIOS && (
         <Text style={styles.value}>
-          {formatDate(value.toISOString(), "dd/MM/yyyy")}
+          {formatDate(value.toISOString(), "dd LLL yyyy")}
         </Text>
       )}
       {visible ? (

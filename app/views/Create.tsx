@@ -1,16 +1,11 @@
-import OptionModal from "@components/OptionModal";
 import AppButton from "@ui/AppButton";
 import CustomKeyboardAvoidingView from "@ui/CustomKeyboardAvoidingView";
-import CategoryOption from "@ui/product/CategoryOption";
-import CategorySelector from "@ui/product/CategorySelector";
 import CreateHeader from "@ui/product/CreateHeader";
 import DatePicker from "@ui/product/DatePicker";
 import FormInput from "@ui/product/FormInput";
-import categories from "@utils/categories";
 import colors from "@utils/colors";
 import { FC, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
 import FileSelector from "@ui/product/FileSelector";
 import ImageList from "@components/ImageList";
@@ -19,6 +14,7 @@ import mime from "mime";
 import useClient from "app/hooks/useClient";
 import { apiRequest } from "app/api/apiRequest";
 import CategoryOptions from "@components/CategoryOptions";
+import { selectImages } from "app/helper/selectImages";
 
 interface Props {}
 
@@ -32,16 +28,11 @@ const defaultInfo = {
 
 const Create: FC<Props> = (props) => {
   const [productInfo, setProductInfo] = useState({ ...defaultInfo });
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { authClient } = useClient();
 
   const { name, category, description, price, purchasingDate } = productInfo;
-
-  const handlePress = () => {
-    setShowCategoryModal(true);
-  };
 
   const handleChange = (name: string) => {
     return (text: string) => {
@@ -52,6 +43,7 @@ const Create: FC<Props> = (props) => {
   const handleSubmit = async () => {
     setLoading(true);
     const { error } = await yupValidate(productSchema, productInfo);
+
     if (error) {
       setLoading(false);
       return showErrorToast({ title: "Lỗi", message: error });
@@ -95,25 +87,19 @@ const Create: FC<Props> = (props) => {
       setProductInfo({ ...defaultInfo });
       setImages([]);
     }
+
     setLoading(false);
   };
 
   const handleSelectImage = async () => {
-    try {
-      const { assets } = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: false,
-        mediaTypes: ["images"],
-        quality: 0.3,
-        allowsMultipleSelection: true,
-      });
-
-      if (!assets) return;
-
-      const imageUris = assets.map(({ uri }) => uri);
-      setImages([...images, ...imageUris]);
-    } catch (error) {
-      showErrorToast({ title: "Lỗi", message: (error as any).message });
+    const newImages = await selectImages();
+    const count = images.length + newImages.length;
+    if (count > 5) {
+      showErrorToast({ title: "Lỗi", message: "Không được chọn quá 5 ảnh" });
+      setImages([...images]);
+      return;
     }
+    setImages([...images, ...newImages]);
   };
 
   return (
@@ -160,7 +146,6 @@ const Create: FC<Props> = (props) => {
 
           <View style={styles.listImage}>
             <FileSelector onPress={handleSelectImage} />
-
             <ImageList
               images={images}
               onDelete={(uri) => {
@@ -170,7 +155,7 @@ const Create: FC<Props> = (props) => {
           </View>
 
           <AppButton
-            active={!loading}
+            visiable={loading}
             title="Create New Product"
             onPress={handleSubmit}
           />
