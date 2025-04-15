@@ -19,6 +19,7 @@
     "@types/react-native-tab-view": "^1.0.6",
     "axios": "^1.8.4",
     "axios-auth-refresh": "^3.3.6",
+    "deep-equal": "^2.2.3",
     "expo": "~52.0.41",
     "expo-image-picker": "~16.0.6",
     "expo-module-scripts": "^4.0.5",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/deep-equal": "^1.0.4",
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
   },

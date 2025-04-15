@@ -19,6 +19,7 @@ import { productSchema, yupValidate } from "@utils/validator";
 import { showErrorToast, showSuccessToast } from "app/helper/toastHelper";
 import mime from "mime";
 import Loading from "@ui/Loading";
+import deepEqual from "deep-equal";
 
 type Props = NativeStackScreenProps<ProfileNavigatorParam, "EditProduct">;
 
@@ -36,16 +37,19 @@ const imageOptions = [
 ];
 
 const EditProduct: FC<Props> = ({ route }) => {
+  const productInfoToUpdate = {
+    ...route.params.product,
+    price: route.params.product.price.toString(),
+    date: new Date(route.params.product.date),
+  };
   const [selectedImage, setSelectedImage] = useState("");
   const [showImageOptions, setShowImageOptions] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [product, setProduct] = useState({
-    ...route.params.product,
-    price: route.params.product.price.toString(),
-    date: new Date(route.params.product.date),
-  });
+  const [product, setProduct] = useState({ ...productInfoToUpdate });
   const { authClient } = useClient();
+
+  const isFormChanged = deepEqual(productInfoToUpdate, product);
 
   const onPress = (image: string) => {
     setSelectedImage(image);
@@ -143,7 +147,11 @@ const EditProduct: FC<Props> = ({ route }) => {
 
     // send update product
     const res = await apiRequest<{ message: string }>(
-      authClient.patch("/api/product/" + product.id, formData)
+      authClient.patch("/api/product/" + product.id, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
     );
 
     console.log(res?.message);
@@ -195,6 +203,7 @@ const EditProduct: FC<Props> = ({ route }) => {
             value={product?.price.toString()}
             onChangeText={(price) => setProduct({ ...product, price })}
           />
+
           <DatePicker
             value={product.date}
             title="Purchasing Date: "
@@ -209,11 +218,14 @@ const EditProduct: FC<Props> = ({ route }) => {
               setProduct({ ...product, description })
             }
           />
-          <AppButton
-            visiable={busy}
-            title="Update Product"
-            onPress={handleOnUpdate}
-          />
+
+          {!isFormChanged && (
+            <AppButton
+              visiable={busy}
+              title="Update Product"
+              onPress={handleOnUpdate}
+            />
+          )}
         </ScrollView>
       </View>
       <Loading visiable={loading} />
