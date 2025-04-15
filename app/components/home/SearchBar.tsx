@@ -27,6 +27,8 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderRadius: 10,
     padding: 10,
+    backgroundColor: colors.white,
+    marginBottom: 10,
   },
   textInput: {
     paddingLeft: 10,

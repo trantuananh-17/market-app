@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     width: imageWidth,
     height: imageWidth / aspect,
     borderRadius: 7,
+    borderWidth: 0.1,
   },
 });
 
