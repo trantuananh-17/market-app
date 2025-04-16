@@ -29,7 +29,6 @@ const ProfileNavigator: FC<Props> = (props) => {
       <Stack.Screen name="MyProductList" component={MyProductList} />
       <Stack.Screen name="ChangeInfo" component={ChangeInfo} />
       <Stack.Screen name="ProductInfo" component={ProductInfo} />
-      <Stack.Screen name="ChatWindow" component={ChatWindow} />
       <Stack.Screen name="EditProduct" component={EditProduct} />
     </Stack.Navigator>
   );

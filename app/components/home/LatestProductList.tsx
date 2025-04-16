@@ -2,6 +2,7 @@ import colors from "@utils/colors";
 import { FC } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import ProductGridView from "./ProductGridView";
+import AppTitle from "@ui/home/AppTitle";
 
 interface Props {
   data: LatestProduct[];
@@ -19,7 +20,7 @@ export type LatestProduct = {
 const LatestProductList: FC<Props> = ({ data, onPress }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sản phẩm mới nhất</Text>
+      <AppTitle title="Sản phẩm mới nhất" />
       <ProductGridView onPress={onPress} data={data} />
     </View>
   );
@@ -27,13 +28,6 @@ const LatestProductList: FC<Props> = ({ data, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {},
-  title: {
-    fontWeight: 600,
-    color: colors.primary,
-    fontSize: 24,
-    marginBottom: 10,
-    letterSpacing: 0.5,
-  },
 });
 
 export default LatestProductList;

@@ -1,4 +1,3 @@
-import categories from "@utils/categories";
 import colors from "@utils/colors";
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,7 +14,9 @@ const CategoryRoute = () => {
         <Ionicons name="menu-outline" size={24} color={colors.white} />
         <Text style={styles.titleText}>Danh sách danh mục</Text>
       </View>
-      <CategoryList onPress={() => navigate("ProductList")} />
+      <CategoryList
+        onPress={(category) => navigate("ProductListByCategory", { category })}
+      />
     </View>
   );
 };

@@ -6,6 +6,7 @@ import colors from "@utils/colors";
 import { formatPrice } from "app/helper/price";
 import ImageSlider from "./ImageSlider";
 import { Product } from "app/store/listing";
+import FormDivider from "@ui/FormDivider";
 
 interface Props {
   product: Product;
@@ -18,12 +19,16 @@ const ProductDetail: FC<Props> = ({ product }) => {
 
       <Text style={styles.name}>{product.name}</Text>
       <Text style={styles.category}>{product.category}</Text>
-      <Text style={styles.price}>{formatPrice(product.price)}</Text>
-      <Text style={styles.date}>
-        Purchased on: {formatDate(product.date, "dd/MM/yyyy")}
-      </Text>
-      <Text style={styles.descriptionTitle}>Description:</Text>
+      <View style={styles.box}>
+        <Text style={styles.price}>{formatPrice(product.price)}</Text>
+        <Text style={styles.date}>
+          Ngày đăng: {formatDate(product.date, "dd/MM/yyyy")}
+        </Text>
+      </View>
+      <Text style={styles.descriptionTitle}>Mô tả:</Text>
       <Text style={styles.description}>{product.description}</Text>
+
+      <FormDivider width="90%" />
 
       <View style={styles.profileContainer}>
         <AvatarView uri={product.seller.avatar} size={60} />
@@ -43,27 +48,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   price: {
-    marginTop: 15,
+    marginTop: 10,
     color: colors.textPrimary,
     fontWeight: 700,
     fontSize: 20,
   },
   date: {
-    marginTop: 5,
+    marginTop: 10,
     color: colors.textPrimary,
     fontWeight: 500,
     fontSize: 16,
   },
   name: {
     marginTop: 15,
-    color: colors.black,
+    color: colors.textPrimary,
     fontWeight: 700,
     fontSize: 20,
   },
   descriptionTitle: {
     fontSize: 18,
-    marginTop: 15,
+    marginTop: 10,
     fontWeight: 500,
+    color: colors.textPrimary,
   },
   description: {
     marginTop: 5,
@@ -75,13 +81,17 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 20,
   },
   profileName: {
     marginLeft: 10,
     color: colors.black,
     fontWeight: 700,
     fontSize: 20,
+  },
+  box: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 

@@ -11,6 +11,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { apiRequest } from "app/api/apiRequest";
 import useClient from "app/hooks/useClient";
 import { Product } from "app/store/listing";
+import Loading from "@ui/Loading";
 <AntDesign name="message1" size={24} color="black" />;
 
 type Props = NativeStackScreenProps<ProfileNavigatorParam, "ProductInfo">;
@@ -20,14 +21,17 @@ const ProductInfo: FC<Props> = ({ route }) => {
   const { product, id } = route.params;
   const { authClient } = useClient();
   const [productInfo, setProductInfo] = useState<Product>();
+  const [loading, setLoading] = useState(false);
 
   const fetchProductInfo = async (id: string) => {
+    setLoading(true);
     const res = await apiRequest(authClient.get("/api/product/detail/" + id));
-    console.log(JSON.stringify(res.product));
 
     if (res) {
+      setLoading(false);
       setProductInfo(res.product);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -49,6 +53,7 @@ const ProductInfo: FC<Props> = ({ route }) => {
           <AntDesign name="message1" size={24} color={colors.white} />
         </Pressable>
       </View>
+      <Loading visiable={loading} />
     </>
   );
 };
